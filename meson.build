@@ -95,7 +95,7 @@ deps = [
     dependency('threads', required: true),
     dependency('zlib', required: true),
     dependency('libcurl', required: true),
-    dependency('lua5.4', required: true),
+    dependency(get_option('lua_library'), required: true),
     dependency('openmp'),
     readline,
 ]
