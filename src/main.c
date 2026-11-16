@@ -59,7 +59,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	log_init();
-	log_printf(log_info, "Thirty %s", HG_CHANGESET_HASH);
+	log_printf(log_info, "Thirty %s", GIT_DESCRIPTION);
 
 	config_init(config_file);
 	blocks_init();

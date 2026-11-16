@@ -282,7 +282,7 @@ commanddef_t *command_find(const char *name) {
 
 void command_version(commandctx_t *ctx) {
 	client_send_message(ctx->client, msgtype_chat, "&fThis server is running &eThirty %s", THIRTY_VERSION);
-	client_send_message(ctx->client, msgtype_chat, "&fMercurial changeset: &e%s", HG_CHANGESET_HASH);
+	client_send_message(ctx->client, msgtype_chat, "&fGit commit: &e%s", GIT_DESCRIPTION);
 #ifdef USE_UNAME
 	{
 		struct utsname un;

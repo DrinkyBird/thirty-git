@@ -28,7 +28,7 @@ version_h = configure_file(input: 'version.h.in', output: 'version.h', configura
     'project_version': meson.project_version()
 })
 
-hg_identify = vcs_tag(command: ['hg', 'identify', '-T', '{ifeq(latesttag, "null", "", latesttag)}{ifeq(latesttagdistance, 0, "", "+{latesttagdistance}.{node|short}")}{if(topic, "-{topic}")}', '-r', '.'], input: 'hginfo.h.in', output: 'hginfo.h', replace_string: '@hg_changeset@')
+git_identify = vcs_tag(command: ['git', 'describe', '--tags', '--always'], input: 'gitinfo.h.in', output: 'gitinfo.h', replace_string: '@git_describe@')
 
 source_files = [
     'src/blocks.c',
@@ -82,7 +82,7 @@ source_files = [
     'lib/stb_image_write.c',
     'lib/stb_image_write.h',
 
-    version_h, hg_identify
+    version_h, git_identify
 ]
 
 readline = dependency('readline', required: get_option('use_readline'))
@@ -104,7 +104,7 @@ if build_machine.system() == 'windows'
     deps += cc.find_library('ws2_32')
     add_project_arguments('-D_USE_MATH_DEFINES', language: 'c')
 	
-    windows_rc = windows.compile_resources('src/win32/thirty.rc', depend_files: version_h, depends: hg_identify, include_directories: '.')
+    windows_rc = windows.compile_resources('src/win32/thirty.rc', depend_files: version_h, depends: git_identify, include_directories: '.')
     source_files += windows_rc
 else
     deps += cc.find_library('m')

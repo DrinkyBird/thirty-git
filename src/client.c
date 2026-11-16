@@ -367,7 +367,7 @@ void client_handle_in_buffer(client_t *client, buffer_t *in_buffer, size_t r) {
 
 				if (supports_cpe) {
 					char server_version[65];
-					snprintf(server_version, sizeof(server_version), "Thirty %s", HG_CHANGESET_HASH);
+					snprintf(server_version, sizeof(server_version), "Thirty %s", GIT_DESCRIPTION);
 					buffer_write_uint8(client->out_buffer, packet_extinfo);
 					buffer_write_mcstr(client->out_buffer, server_version, false);
 					buffer_write_uint16be(client->out_buffer, cpe_count_supported());
@@ -954,7 +954,7 @@ void client_ws_upgrade(client_t *client, int r) {
 			 "\r\n",
 
 			 key_b64,
-			 "Thirty", HG_CHANGESET_HASH
+			 "Thirty", GIT_DESCRIPTION
 	);
 
 	buffer_write(client->out_buffer, response, strlen(response));

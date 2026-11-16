@@ -66,14 +66,14 @@ static void *heartbeat_main(void *data) {
 	curl_url_set(curlu, CURLUPART_QUERY, tmp, CURLU_APPENDQUERY|CURLU_URLENCODE);
 	snprintf(tmp, sizeof tmp, "users=%zu", server.num_spawned_clients);
 	curl_url_set(curlu, CURLUPART_QUERY, tmp, CURLU_APPENDQUERY|CURLU_URLENCODE);
-	snprintf(tmp, sizeof tmp, "software=Thirty %s", HG_CHANGESET_HASH);
+	snprintf(tmp, sizeof tmp, "software=Thirty %s", GIT_DESCRIPTION);
 	curl_url_set(curlu, CURLUPART_QUERY, tmp, CURLU_APPENDQUERY|CURLU_URLENCODE);
 	snprintf(tmp, sizeof tmp, "name=%s", config.server.name);
 	curl_url_set(curlu, CURLUPART_QUERY, tmp, CURLU_APPENDQUERY|CURLU_URLENCODE);
 
 	CURL *curl = curl_easy_init();
 	curl_easy_setopt(curl, CURLOPT_CURLU, curlu);
-	snprintf(tmp, sizeof tmp, "Thirty %s", HG_CHANGESET_HASH);
+	snprintf(tmp, sizeof tmp, "Thirty %s", GIT_DESCRIPTION);
 	curl_easy_setopt(curl, CURLOPT_USERAGENT, tmp);
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, heartbeat_curl_write_func);
 	curl_easy_setopt(curl, CURLOPT_WRITEDATA, (char *)response);
