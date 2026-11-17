@@ -1,4 +1,4 @@
 #pragma once
-#include "hginfo.h"
+#include "gitinfo.h"
 
 #define THIRTY_VERSION "@project_version@"
