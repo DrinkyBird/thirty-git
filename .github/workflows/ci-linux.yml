@@ -23,7 +23,7 @@ jobs:
       shell: bash
       run: |
         sudo apt-get update
-        sudo apt-get install build-essential clang libomp-dev meson ninja-build zlib1g-dev libcurl4-gnutls-dev pkgconf libreadline-dev
+        sudo apt-get install build-essential clang clang-tools libomp-dev meson ninja-build zlib1g-dev libcurl4-gnutls-dev pkgconf libreadline-dev
 
     - name: Configure
       run: >
@@ -31,3 +31,12 @@ jobs:
 
     - name: Build
       run: cd builddir && meson compile
+
+    - name: Run scan-build
+      run: cd builddir && ninja scan-build
+      
+    - name: Upload scan-build output
+      uses: actions/upload-artifact@v7
+      with:
+        name: scanbuild
+        path: builddir/meson-logs/scanbuild
