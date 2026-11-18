@@ -66,26 +66,33 @@ bool server_init(void) {
 
 	int err;
 
-	err = (server.socket_fd = socket(AF_INET, SOCK_STREAM, 0));
+	err = (server.socket_fd = socket(AF_INET6, SOCK_STREAM, 0));
 
 	if (err == -1) {
 		socket_perror("socket");
 		return false;
 	}
 
-	struct sockaddr_in server_addr = { 0 };
-	server_addr.sin_family = AF_INET;
-	server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-	server_addr.sin_port = htons((uint16_t)server.port);
+	struct sockaddr_in6 server_addr = { 0 };
+	server_addr.sin6_family = AF_INET6;
+	server_addr.sin6_addr = in6addr_any;
+	server_addr.sin6_port = htons((uint16_t)server.port);
 
 #ifdef _WIN32
 	BOOL reuseaddr_value = 1;
+	DWORD v6only_value = 0;
 #else
 	int reuseaddr_value = 1;
+	int v6only_value = 0;
 #endif
 	err = setsockopt(server.socket_fd, SOL_SOCKET, SO_REUSEADDR, (const char *)&reuseaddr_value, sizeof(reuseaddr_value));
 	if (err == -1) {
 		socket_perror("setsockopt(SO_REUSEADDR)");
+		return false;
+	}
+	err = setsockopt(server.socket_fd, IPPROTO_IPV6, IPV6_V6ONLY, (const char *)&v6only_value, sizeof(v6only_value));
+	if (err == -1) {
+		socket_perror("setsockopt(IPPROTO_IPV6)");
 		return false;
 	}
 
@@ -229,20 +236,18 @@ void server_accept(void) {
 	setsockopt(acceptfd, IPPROTO_TCP, TCP_NODELAY, &yes, sizeof(yes));
 #endif
 
-	struct sockaddr_in *sin = (struct sockaddr_in *)&client_addr;
-	uint8_t *ip = (uint8_t *)&sin->sin_addr.s_addr;
+	struct sockaddr_in6 *sin = (struct sockaddr_in6 *)&client_addr;
 
 	char addrstr[64];
-	snprintf(addrstr, sizeof(addrstr), "%u.%u.%u.%u", ip[0], ip[1], ip[2], ip[3]);
+	inet_ntop(AF_INET6, &sin->sin6_addr, addrstr, sizeof(addrstr));
 
-	log_printf(log_info, "Incoming connection from %s:%u", addrstr, sin->sin_port);
+	log_printf(log_info, "Incoming connection from %s:%u", addrstr, sin->sin6_port);
 
 	size_t conn_idx = server.num_clients++;
 	server.clients = realloc(server.clients, server.num_clients * sizeof(*server.clients));
 	client_t *client = &server.clients[conn_idx];
 	client_init(client, acceptfd, conn_idx);
-	memcpy(client->address, ip, sizeof(client->address));
-	client->port = sin->sin_port;
+	memcpy(&client->address, sin, sizeof(client->address));
 
 	if (namelist_contains(server.banned_ips, addrstr)) {
 		log_printf(log_info, "Client %s is banned!", addrstr);

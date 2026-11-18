@@ -39,8 +39,7 @@ typedef struct client_s {
 	size_t idx;
 	bool is_op;
 
-	uint8_t address[4];
-	uint16_t port;
+	struct sockaddr_in6 address;
 
 	uint8_t protocol_version;
 

@@ -914,7 +914,7 @@ void client_ws_upgrade(client_t *client, int r) {
 	const char *real_ip = util_httpheaders_get(&headers, "X-Real-IP");
 	if (real_ip != NULL) {
 		char addrstr[64];
-		snprintf(addrstr, sizeof(addrstr), "%u.%u.%u.%u", client->address[0], client->address[1], client->address[2], client->address[3]);
+		inet_ntop(AF_INET6, &client->address, addrstr, sizeof(addrstr));
 
 		bool allowed = false;
 

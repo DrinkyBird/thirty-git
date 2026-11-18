@@ -39,6 +39,7 @@ static inline int socket_error(void) { return WSAGetLastError(); }
 #include <netinet/in.h>
 #include <sys/ioctl.h>
 #include <sys/socket.h>
+#include <arpa/inet.h>
 #include <errno.h>
 #include <unistd.h>
 
