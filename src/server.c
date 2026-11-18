@@ -69,7 +69,7 @@ bool server_init(void) {
 	err = (server.socket_fd = socket(AF_INET, SOCK_STREAM, 0));
 
 	if (err == -1) {
-		perror("socket");
+		socket_perror("socket");
 		return false;
 	}
 
@@ -78,35 +78,36 @@ bool server_init(void) {
 	server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
 	server_addr.sin_port = htons((uint16_t)server.port);
 
-	int yes = 1;
 #ifdef _WIN32
-	err = setsockopt(server.socket_fd, SOL_SOCKET, SO_REUSEADDR, (const char *)&yes, sizeof(yes));
+	BOOL reuseaddr_value = 1;
 #else
-	err = setsockopt(server.socket_fd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes));
+	int reuseaddr_value = 1;
 #endif
+	err = setsockopt(server.socket_fd, SOL_SOCKET, SO_REUSEADDR, (const char *)&reuseaddr_value, sizeof(reuseaddr_value));
 	if (err == -1) {
-		perror("setsockopt(SO_REUSEADDR)");
+		socket_perror("setsockopt(SO_REUSEADDR)");
 		return false;
 	}
 
 	err = bind(server.socket_fd, (struct sockaddr *)&server_addr, sizeof(server_addr));
 	if (err == -1) {
-		perror("bind");
+		socket_perror("bind");
 		return false;
 	}
 
 	// TODO: magic number
 	err = listen(server.socket_fd, 10);
 	if (err == -1) {
-		perror("listen");
+		socket_perror("listen");
 		return false;
 	}
 
 #ifdef _WIN32
-	ioctlsocket(server.socket_fd, FIONBIO, (u_long *)&yes);
+	u_long fionbio_value = 1;
 #else
-	ioctlsocket(server.socket_fd, FIONBIO, &yes);
+	int fionbio_value = 1;
 #endif
+	ioctlsocket(server.socket_fd, FIONBIO, &fionbio_value);
 
 	log_printf(log_info, "Server is listening on port %u", server.port);
 

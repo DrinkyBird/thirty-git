@@ -56,3 +56,5 @@ typedef int socket_t;
 static inline int socket_error(void) { return errno; }
 
 #endif
+
+void socket_perror(const char *str);

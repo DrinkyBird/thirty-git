@@ -24,6 +24,7 @@
 #include "util.h"
 #include "config.h"
 #include "log.h"
+#include "sockets.h"
 
 #if defined(__linux__)
 #include <sys/random.h>
@@ -269,4 +270,16 @@ bool util_secure_random(void *out, size_t num) {
 #endif
 
 	return true;
+}
+
+void socket_perror(const char *str) {
+#ifdef _WIN32
+	int err = WSAGetLastError();
+	char *s = NULL;
+	FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER|FORMAT_MESSAGE_FROM_SYSTEM|FORMAT_MESSAGE_IGNORE_INSERTS, NULL, err, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&s, 0, NULL);
+	log_printf(log_error, "%s: %s\n", str, s);
+	LocalFree(s);
+#else
+	log_printf(log_error, "%s: %s\n", str, strerror(errno));
+#endif
 }
