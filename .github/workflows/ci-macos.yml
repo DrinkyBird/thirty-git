@@ -21,7 +21,7 @@ jobs:
     - name: Install dependencies
       shell: bash
       run: |
-        brew install meson ninja readline libomp
+        brew install meson ninja readline libomp lua@5.4
 
     - name: Configure
       run: >
