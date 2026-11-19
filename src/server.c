@@ -226,15 +226,15 @@ void server_accept(void) {
 		return;
 	}
 
-	int yes = 1;
 #ifdef _WIN32
-	const char i_hate_winsock = 1;
-	ioctlsocket(acceptfd, FIONBIO, (u_long *)&yes);
-	setsockopt(acceptfd, IPPROTO_TCP, TCP_NODELAY, &i_hate_winsock, sizeof(i_hate_winsock));
+	u_long fionbio_value = 1;
+	const char nodelay_value = 1;
 #else
-	ioctlsocket(acceptfd, FIONBIO, &yes);
-	setsockopt(acceptfd, IPPROTO_TCP, TCP_NODELAY, &yes, sizeof(yes));
+	int fionbio_value = 1;
+	int nodelay_value = 1;
 #endif
+	ioctlsocket(acceptfd, FIONBIO, &fionbio_value);
+	setsockopt(acceptfd, IPPROTO_TCP, TCP_NODELAY, &nodelay_value, sizeof(nodelay_value));
 
 	struct sockaddr_in6 *sin = (struct sockaddr_in6 *)&client_addr;
 
