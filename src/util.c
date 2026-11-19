@@ -283,3 +283,13 @@ void socket_perror(const char *str) {
 	log_printf(log_error, "%s: %s\n", str, strerror(errno));
 #endif
 }
+
+void stringify_address(const struct sockaddr_in6 *addr, char *str, size_t len) {
+	if (IN6_IS_ADDR_V4MAPPED(&addr->sin6_addr)) {
+		const uint8_t *octets = (const uint8_t *)&addr->sin6_addr + 12;
+		snprintf(str, len, "%u.%u.%u.%u", octets[0], octets[1], octets[2], octets[3]);
+	}
+	else {
+		inet_ntop(AF_INET6, addr, str, len);
+	}
+}

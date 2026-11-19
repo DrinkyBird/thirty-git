@@ -42,6 +42,7 @@ static inline int socket_error(void) { return WSAGetLastError(); }
 #include <arpa/inet.h>
 #include <errno.h>
 #include <unistd.h>
+#include <netdb.h>
 
 #define SOCKET_EWOULDBLOCK EWOULDBLOCK
 #define SOCKET_ECONNABORTED ECONNABORTED
@@ -59,3 +60,6 @@ static inline int socket_error(void) { return errno; }
 #endif
 
 void socket_perror(const char *str);
+
+// convert address to string, formatting ipv4-mapped ipv6 properly
+void stringify_address(const struct sockaddr_in6 *addr, char *str, size_t len);

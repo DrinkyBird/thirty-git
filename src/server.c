@@ -238,8 +238,8 @@ void server_accept(void) {
 
 	struct sockaddr_in6 *sin = (struct sockaddr_in6 *)&client_addr;
 
-	char addrstr[64];
-	inet_ntop(AF_INET6, &sin->sin6_addr, addrstr, sizeof(addrstr));
+	char addrstr[NI_MAXHOST];
+	stringify_address(sin, addrstr, NI_MAXHOST);
 
 	log_printf(log_info, "Incoming connection from %s:%u", addrstr, sin->sin6_port);
 
