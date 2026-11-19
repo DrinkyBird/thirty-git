@@ -25,11 +25,11 @@ jobs:
       with:
         msystem: ${{ matrix.sys }}
         update: true
-        pacboy: toolchain:p meson:p zlib:p ninja:p readline:p curl:p
+        pacboy: toolchain:p meson:p zlib:p ninja:p readline:p curl:p lua54:p
 
     - name: Configure
       run: >
-        meson setup -Dbuildtype=release builddir
+        meson setup -Dbuildtype=release -Dlua_library=lua5.4 builddir
 
     - name: Build
       run: cd builddir && meson compile
